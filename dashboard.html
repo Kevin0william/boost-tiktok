@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Monétiseur TikTok - Dashboard</title>
+  <style>
+    /* Fond animé inspiré de la page d'accueil */
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(-45deg, #1a2a6c, #b21f1f, #fdbb2d, #1a2a6c);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      font-family: 'Roboto', sans-serif;
+      color: #fff;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    /* Topbar repensée et responsive */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(0,0,0,0.7);
+      box-shadow: 0 0 20px rgba(255,215,0,0.8);
+      flex-wrap: wrap;
+    }
+    .topbar-left, .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .topbar h2 {
+      font-size: 2rem;
+      color: #ffd700;
+      text-shadow: 0 0 10px #ffd700;
+    }
+    
+    /* Boutons principaux */
+    .community-btn {
+      background: #ffd700;
+      color: #111;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .community-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #ffd700;
+    }
+    /* Bouton Info avec effet battant (pulsation) et très brillant */
+    .info-btn {
+      background: #ffcc00;
+      color: #111;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      position: relative;
+      animation: beat 1.5s infinite;
+      box-shadow: 0 0 20px #ffcc00;
+    }
+    @keyframes beat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+    .new-account-btn {
+      background: #28a745;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .new-account-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #28a745;
+    }
+    
+    /* Champ de recherche et bouton */
+    .topbar-right input[type="text"] {
+      padding: 0.5rem 1rem;
+      border: 2px solid #ffd700;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      outline: none;
+      transition: border 0.3s, box-shadow 0.3s;
+    }
+    .topbar-right input[type="text"]:focus {
+      border-color: #ffc107;
+      box-shadow: 0 0 10px #ffc107;
+    }
+    .topbar-right button {
+      background: #ffd700;
+      color: #111;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .topbar-right button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #ffd700;
+    }
+    
+    /* Contenu principal */
+    .container {
+      padding: 2rem;
+    }
+    
+    /* Section d'affichage de l'utilisateur courant */
+    .user-info {
+      margin-bottom: 2rem;
+      font-size: 1.4rem;
+      text-align: center;
+    }
+    .user-info .info-btn, .user-info .subscribeBtn {
+      margin-left: 0.5rem;
+    }
+    
+    /* Cartes pour la liste des comptes */
+    .accounts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .account-card {
+      background: rgba(0, 0, 0, 0.6);
+      border: 2px solid #ffd700;
+      padding: 1rem;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .account-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 15px #ffd700;
+    }
+    .account-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .account-info button.info-btn {
+      background: #fff;
+      color: #111;
+      border: none;
+      padding: 0.5rem;
+      border-radius: 50%;
+      font-weight: bold;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .account-info span {
+      font-size: 1.2rem;
+    }
+    .account-card .subscribeBtn {
+      background: #ffd700;
+      color: #111;
+      border: none;
+      padding: 0.7rem 1.2rem;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .account-card .subscribeBtn:hover {
+      transform: scale(1.05);
+      background: #ffc107;
+    }
+    .account-card .subscribeBtn.visited {
+      background: red;
+      color: #fff;
+    }
+    
+    /* Modal pour Info */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background: rgba(0,0,0,0.8);
+      animation: fadeInModal 0.5s;
+    }
+    @keyframes fadeInModal {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal-content {
+      background: #fff;
+      color: #111;
+      margin: 10% auto;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 0 20px rgba(255,215,0,0.9);
+      animation: modalPop 0.5s;
+    }
+    @keyframes modalPop {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-content .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #aaa;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .modal-content .close:hover {
+      color: #000;
+    }
+    
+    /* Responsive ajustements */
+    @media (max-width: 768px) {
+      .topbar {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+      .topbar-left, .topbar-right {
+        justify-content: center;
+      }
+      .account-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .account-info {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+    </style>
+</head>
+<body>
+  <!-- Barre de navigation supérieure -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Monétiseur TikTok</h2>
+      <button id="communityBtn" class="community-btn">Cree par kevin william <br>numero whatsapp:  +237670078114</button>
+      <button id="infoBtn" class="info-btn">Info</button>
+    </div>
+    <div class="topbar-right">
+      <input type="text" id="searchInput" placeholder="Rechercher par nom ou numéro">
+      <button id="searchBtn">Rechercher</button>
+      <button id="newAccountBtn" class="new-account-btn">Crée un nouveau compte</button>
+    </div>
+  </div>
+  
+  <div class="container">
+    <!-- Affichage de l'utilisateur courant -->
+    <div class="user-info" id="userInfo"></div>
+    <!-- Liste des comptes enregistrés -->
+    <div class="accounts-list" id="accountsList"></div>
+  </div>
+  
+  <!-- Modal Info -->
+  <div id="infoModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>Bienvenue dans le site de boost tiktok ...
+         Ici vous pouver vous abonner tres rapidement a n'importe quel compte present dans le site . <br>
+         Ce site est en cour d'amelioration ... l'objectif final est de faire un abonnement general de tout les compte present dans le site en un seul click . <br>
+         il vous est impossible d'acceder a cette page sans vous inscrire , l'option de connexion a votre compte est egalement en travaille ... <br>
+         Merci de votre comprehension et de votre patience . <br>
+         En attendant profiter du site et des fonction disponible : <br>
+          1. abonnement a un compte en un seul clique et retour garantie <br>
+          2. autorisation de nous contacter pour une formation gratuite en developpement web via le numero present  en haut dans le bouton jaune <br>
+         Merci pour tout !
+      </p>
+    </div>
+  </div>
+  
+  <script>
+    // Récupérer l'utilisateur courant et la liste des comptes depuis le localStorage
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+    
+    // Affichage de l'utilisateur courant avec numéro (bouton), nom et bouton d'abonnement
+    const userInfoDiv = document.getElementById('userInfo');
+    if (currentUser) {
+      userInfoDiv.innerHTML = `
+        Bienvenue 
+        <button class="info-btn">${currentUser.connectionNumber}</button>
+        ${currentUser.username} 
+        <button class="subscribeBtn" 
+        id="currentTikTokBtn" 
+        style="background-color: gold; 
+        border-color: gold; 
+        border-radius: 2vw;  
+        font-size: 1.5vw; 
+        font-weight: bold; 
+        background: #ffd700;
+      color: #111;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s, 
+      box-shadow 0.3s; :hover= background-color: blue;">Consulter mon compte</button>
+      `;
+      document.getElementById('currentTikTokBtn').addEventListener('click', function() {
+        this.classList.add('visited');
+        window.open(currentUser.tiktokLink, '_blank');
+      });
+    }
+    
+    // Fonction pour afficher la liste des comptes filtrée par nom ou numéro
+    function renderAccounts(filter = "") {
+      const accountsListDiv = document.getElementById('accountsList');
+      accountsListDiv.innerHTML = "";
+      const filtered = accounts.filter(acc => {
+        const term = filter.toLowerCase();
+        const matchesName = acc.username.toLowerCase().includes(term);
+        const matchesNumber = !isNaN(term) && acc.connectionNumber === Number(term);
+        return matchesName || matchesNumber;
+      });
+      filtered.forEach(acc => {
+        const card = document.createElement('div');
+        card.className = "account-card";
+        card.innerHTML = `
+          <div class="account-info">
+            <button class="info-btn">${acc.connectionNumber}</button>
+            <span>${acc.username}</span>
+          </div>
+          <button class="subscribeBtn" data-link="${acc.tiktokLink}">S'abonner</button>
+        `;
+        accountsListDiv.appendChild(card);
+      });
+    }
+    renderAccounts();
+    
+    // Gestion de la recherche (nom ou numéro)
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    function doSearch() {
+      renderAccounts(searchInput.value.trim());
+    }
+    searchBtn.addEventListener('click', doSearch);
+    searchInput.addEventListener('keyup', function(e) {
+      if(e.key === "Enter") doSearch();
+    });
+    
+    // Gestion du clic sur les boutons "S'abonner"
+    document.addEventListener('click', function(e) {
+      if(e.target && e.target.classList.contains('subscribeBtn')){
+        const btn = e.target;
+        if (!btn.classList.contains('visited')) {
+          btn.classList.add('visited');
+          window.open(btn.getAttribute('data-link'), '_blank');
+        }
+      }
+    });
+    
+    // Redirection vers la page d'inscription pour créer un nouveau compte
+    document.getElementById('newAccountBtn').addEventListener('click', function() {
+      window.location.href = "acceuillir.html";
+    });
+    
+    // Gestion de la modal Info
+    const infoBtn = document.getElementById('infoBtn');
+    const infoModal = document.getElementById('infoModal');
+    const closeModal = document.querySelector('.modal-content .close');
+    
+    // localStorage.clear(); ceci cest pour reinitialiser  les connexion dans le site
+
+
+    infoBtn.addEventListener('click', function() {
+      infoModal.style.display = "block";
+    });
+    closeModal.addEventListener('click', function() {
+      infoModal.style.display = "none";
+    });
+    window.addEventListener('click', function(event) {
+      if (event.target == infoModal) {
+        infoModal.style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>
